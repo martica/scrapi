@@ -721,12 +721,10 @@ module HTML
       return lambda { |element| false } if a == 0 and b == 0
       # a < 0 and b < 0 will never match against an index
       return lambda { |element| false } if a < 0 and b < 0
-      b = a + b + 1 if b < 0   # b < 0 just picks last element from each group
-      b -= 1 unless b == 0  # b == 0 is same as b == 1, otherwise zero based
       lambda do |element|
         # Element must be inside parent element.
         return false unless element.parent and element.parent.tag?
-        index = 0
+        index = 1
         # Get siblings, reverse if counting from last.
         siblings = element.parent.children
         siblings = siblings.reverse if reverse
@@ -742,17 +740,10 @@ module HTML
                 found = child.equal?(element)
                 break
               end
-            elsif a < 0
-              # Only look for first b elements
-              break if index > b
-              if child.equal?(element)
-                found = (index % a) == 0
-                break
-              end
             else
               # Otherwise, break if child found and count ==  an+b
               if child.equal?(element)
-                found = (index % a) == b
+                found = ((index-b)/a >= 0 and (index-b)%a == 0)
                 break
               end
             end

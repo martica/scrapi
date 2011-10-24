@@ -331,6 +331,9 @@ class SelectorTest < Test::Unit::TestCase
     # Same but b can be omitted when zero.
     select("tr:nth-child(n)")
     assert_equal 4, @matches.size
+    # Positive b moves the first element selected
+    select("tr:nth-child(n+2)")
+    assert_equal 3, @matches.size
   end
 
 
@@ -342,8 +345,8 @@ class SelectorTest < Test::Unit::TestCase
     # If b is zero, pick the n-th element (here every second).
     select("tr:nth-child(2n+0)")
     assert_equal 2, @matches.size
-    assert_equal "1", @matches[0].attributes["id"]
-    assert_equal "3", @matches[1].attributes["id"]
+    assert_equal "2", @matches[0].attributes["id"]
+    assert_equal "4", @matches[1].attributes["id"]
     # If a and b are both zero, no element selected.
     select("tr:nth-child(0n+0)")
     assert_equal 0, @matches.size
@@ -368,7 +371,7 @@ class SelectorTest < Test::Unit::TestCase
     # Since a is -2, picks the first in every second of first three elements.
     select("tr:nth-child(-2n+2)")
     assert_equal 1, @matches.size
-    assert_equal "1", @matches[0].attributes["id"]
+    assert_equal "2", @matches[0].attributes["id"]
   end
 
 
@@ -377,16 +380,16 @@ class SelectorTest < Test::Unit::TestCase
     # Select last of four.
     select("tr:nth-child(4n-1)")
     assert_equal 1, @matches.size
-    assert_equal "4", @matches[0].attributes["id"]
+    assert_equal "3", @matches[0].attributes["id"]
     # Select first of four.
     select("tr:nth-child(4n-4)")
     assert_equal 1, @matches.size
-    assert_equal "1", @matches[0].attributes["id"]
+    assert_equal "4", @matches[0].attributes["id"]
     # Select last of every second.
     select("tr:nth-child(2n-1)")
     assert_equal 2, @matches.size
-    assert_equal "2", @matches[0].attributes["id"]
-    assert_equal "4", @matches[1].attributes["id"]
+    assert_equal "1", @matches[0].attributes["id"]
+    assert_equal "3", @matches[1].attributes["id"]
     # Select nothing since an+b always < 0
     select("tr:nth-child(-1n-1)")
     assert_equal 0, @matches.size
@@ -404,6 +407,9 @@ class SelectorTest < Test::Unit::TestCase
     assert_equal 2, @matches.size
     assert_equal "2", @matches[0].attributes["id"]
     assert_equal "4", @matches[1].attributes["id"]
+    select("tr:nth-child(?n?)", 2, 3)
+    assert_equal 1, @matches.size
+    assert_equal "3", @matches[0].attributes["id"]
     select("tr:nth-child(?n?)", 4, 2)
     assert_equal 1, @matches.size
     assert_equal "2", @matches[0].attributes["id"]
